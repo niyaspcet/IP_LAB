@@ -2,45 +2,36 @@ clc;
 clear all;
 close all;
 
-%define the five parameters
-theta=0; %either 0 or pi/4 or pi/2 or 3pi/4
-lambda=7;
-gamma=1;
-sigma=2;
-psi=0;
+%Reading the image
+I=imread('C:\Users\Visakh\Desktop\DIP_Case_Study\Database\107_2.tif');
+[m n]=size(I);
 
-sigma_x = sigma;
-sigma_y = sigma/gamma;
+%Applying Gabor Filter at different angles from 0 to 179.5 degrees by the
+%increment of 0.5
+s=zeros(m,n);
+for i=0:0.5:179.5
+       [m p] = imgaborfilt(I,2,i);
+       s=s+m;
+end
+s=s/361; %Taking Averege
+%Converting range of values to 0-255 range
+min=min(min(s));
+max=max(max(s));
+s=s-min;
+k=255/max;
+s=s*k;
+s=uint8(255-s);
+%avg=200;
 
-nstds = 5;
-xmax = max(abs(nstds*sigma_x*cos(theta)),abs(nstds*sigma_y*sin(theta)));
-xmax = ceil(max(1,xmax));
-ymax = max(abs(nstds*sigma_x*sin(theta)),abs(nstds*sigma_y*cos(theta)));
-ymax = ceil(max(1,ymax));
-xmin = -xmax; ymin = -ymax;
-[x,y] = meshgrid(xmin:xmax,ymin:ymax);
+%s(s<avg)=0;
+%s(s>=avg)=255;
 
-x_theta=x*cos(theta)+y*sin(theta);
-y_theta=-x*sin(theta)+y*cos(theta);
+%Plot
+figure
+subplot(122);
+imshow(uint8(s));
+title('Enhanced Image');
 
-gb= exp(-.5*(x_theta.^2/sigma_x^2+y_theta.^2/sigma_y^2)).*cos(2*pi/lambda*x_theta+psi);
-figure(2);
-imshow(gb);
-title('theta=...');
-%imagesc(gb);
-%colormap(gray);
-%title('theta=...');
-
-
-I=imread('ww.png');
-image_resize=imresize(I, [160,160]);
-image_gray=rgb2gray(image_resize);
-image_double=im2double(image_gray);
-figure(1);
-imshow(image_double);
-
-figure(3);
-filtered = conv2(image_double,gb);
-imagesc(filtered);
-colormap(gray);
-title('theta=....');
+subplot(121);
+imshow(uint8(I));
+title('Original Image');
