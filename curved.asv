@@ -1,0 +1,15 @@
+clc;
+clear all;
+close all;
+
+%Reading the image
+I=imread('C:\Users\Visakh\Desktop\DIP_Case_Study\Database\107_2.tif');
+[m n]=size(I);
+I=imresize(I,1001,1001);
+for y=1:n
+    for x=1:m
+        x1=x-1;
+        y1=y-501;
+        y2=1/
+    end
+end
